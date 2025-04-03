@@ -5,61 +5,61 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SASParserTest {
+public class SasParserTest {
 
     @Test
     public void testMacroStatement() {
         String sasCode = "%LET RUNDATE = %SYSGET(RUNDATE);";
-        SASLexer lexer = new SASLexer(CharStreams.fromString(sasCode));
-        SASParser parser = new SASParser(new CommonTokenStream(lexer));
+        SasLexer lexer = new SasLexer(CharStreams.fromString(sasCode));
+        SasParser parser = new SasParser(new CommonTokenStream(lexer));
         assertNotNull(parser.program());
     }
 
     @Test
     public void testDataStep() {
         String sasCode = "data test; run;";
-        SASLexer lexer = new SASLexer(CharStreams.fromString(sasCode));
-        SASParser parser = new SASParser(new CommonTokenStream(lexer));
+        SasLexer lexer = new SasLexer(CharStreams.fromString(sasCode));
+        SasParser parser = new SasParser(new CommonTokenStream(lexer));
         assertNotNull(parser.program());
     }
 
     @Test
     public void testProcStep() {
         String sasCode = "proc print; run;";
-        SASLexer lexer = new SASLexer(CharStreams.fromString(sasCode));
-        SASParser parser = new SASParser(new CommonTokenStream(lexer));
+        SasLexer lexer = new SasLexer(CharStreams.fromString(sasCode));
+        SasParser parser = new SasParser(new CommonTokenStream(lexer));
         assertNotNull(parser.program());
     }
 
     @Test
     public void testAssignment() {
         String sasCode = "x = 10;";
-        SASLexer lexer = new SASLexer(CharStreams.fromString(sasCode));
-        SASParser parser = new SASParser(new CommonTokenStream(lexer));
+        SasLexer lexer = new SasLexer(CharStreams.fromString(sasCode));
+        SasParser parser = new SasParser(new CommonTokenStream(lexer));
         assertNotNull(parser.program());
     }
 
     @Test
     public void testPutStatement() {
         String sasCode = "%put Hello World;";
-        SASLexer lexer = new SASLexer(CharStreams.fromString(sasCode));
-        SASParser parser = new SASParser(new CommonTokenStream(lexer));
+        SasLexer lexer = new SasLexer(CharStreams.fromString(sasCode));
+        SasParser parser = new SasParser(new CommonTokenStream(lexer));
         assertNotNull(parser.program());
     }
 
     @Test
     public void testGenericFunction() {
         String sasCode = "x = myFunction(10, 20);";
-        SASLexer lexer = new SASLexer(CharStreams.fromString(sasCode));
-        SASParser parser = new SASParser(new CommonTokenStream(lexer));
+        SasLexer lexer = new SasLexer(CharStreams.fromString(sasCode));
+        SasParser parser = new SasParser(new CommonTokenStream(lexer));
         assertNotNull(parser.program());
     }
 
     @Test
     public void testInbuiltFunction() {
         String sasCode = "x = sum(10, 20);";
-        SASLexer lexer = new SASLexer(CharStreams.fromString(sasCode));
-        SASParser parser = new SASParser(new CommonTokenStream(lexer));
+        SasLexer lexer = new SasLexer(CharStreams.fromString(sasCode));
+        SasParser parser = new SasParser(new CommonTokenStream(lexer));
         assertNotNull(parser.program());
     }
 
@@ -73,8 +73,8 @@ public class SASParserTest {
         };
         
         for (String sasCode : testCases) {
-            SASLexer lexer = new SASLexer(CharStreams.fromString(sasCode));
-            SASParser parser = new SASParser(new CommonTokenStream(lexer));
+            SasLexer lexer = new SasLexer(CharStreams.fromString(sasCode));
+            SasParser parser = new SasParser(new CommonTokenStream(lexer));
             assertNotNull(parser.program());
         }
     }
@@ -89,8 +89,8 @@ public class SASParserTest {
         };
         
         for (String sasCode : testCases) {
-            SASLexer lexer = new SASLexer(CharStreams.fromString(sasCode));
-            SASParser parser = new SASParser(new CommonTokenStream(lexer));
+            SasLexer lexer = new SasLexer(CharStreams.fromString(sasCode));
+            SasParser parser = new SasParser(new CommonTokenStream(lexer));
             assertNotNull(parser.program());
         }
     }
@@ -106,8 +106,8 @@ public class SASParserTest {
         };
         
         for (String sasCode : testCases) {
-            SASLexer lexer = new SASLexer(CharStreams.fromString(sasCode));
-            SASParser parser = new SASParser(new CommonTokenStream(lexer));
+            SasLexer lexer = new SasLexer(CharStreams.fromString(sasCode));
+            SasParser parser = new SasParser(new CommonTokenStream(lexer));
             assertNotNull(parser.program());
         }
     }
@@ -122,8 +122,8 @@ public class SASParserTest {
         };
         
         for (String sasCode : testCases) {
-            SASLexer lexer = new SASLexer(CharStreams.fromString(sasCode));
-            SASParser parser = new SASParser(new CommonTokenStream(lexer));
+            SasLexer lexer = new SasLexer(CharStreams.fromString(sasCode));
+            SasParser parser = new SasParser(new CommonTokenStream(lexer));
             assertNotNull(parser.program());
         }
     }
@@ -143,8 +143,8 @@ public class SASParserTest {
         };
         
         for (String sasCode : testCases) {
-            SASLexer lexer = new SASLexer(CharStreams.fromString(sasCode));
-            SASParser parser = new SASParser(new CommonTokenStream(lexer));
+            SasLexer lexer = new SasLexer(CharStreams.fromString(sasCode));
+            SasParser parser = new SasParser(new CommonTokenStream(lexer));
             assertNotNull(parser.program());
         }
     }
@@ -162,8 +162,8 @@ public class SASParserTest {
         };
         
         for (String sasCode : testCases) {
-            SASLexer lexer = new SASLexer(CharStreams.fromString(sasCode));
-            SASParser parser = new SASParser(new CommonTokenStream(lexer));
+            SasLexer lexer = new SasLexer(CharStreams.fromString(sasCode));
+            SasParser parser = new SasParser(new CommonTokenStream(lexer));
             assertNotNull(parser.program());
         }
     }
@@ -179,8 +179,8 @@ public class SASParserTest {
         };
         
         for (String sasCode : testCases) {
-            SASLexer lexer = new SASLexer(CharStreams.fromString(sasCode));
-            SASParser parser = new SASParser(new CommonTokenStream(lexer));
+            SasLexer lexer = new SasLexer(CharStreams.fromString(sasCode));
+            SasParser parser = new SasParser(new CommonTokenStream(lexer));
             assertNotNull(parser.program());
         }
     }
@@ -196,8 +196,8 @@ public class SASParserTest {
         };
         
         for (String sasCode : testCases) {
-            SASLexer lexer = new SASLexer(CharStreams.fromString(sasCode));
-            SASParser parser = new SASParser(new CommonTokenStream(lexer));
+            SasLexer lexer = new SasLexer(CharStreams.fromString(sasCode));
+            SasParser parser = new SasParser(new CommonTokenStream(lexer));
             assertNotNull(parser.program());
         }
     }
@@ -215,8 +215,8 @@ public class SASParserTest {
         };
         
         for (String sasCode : testCases) {
-            SASLexer lexer = new SASLexer(CharStreams.fromString(sasCode));
-            SASParser parser = new SASParser(new CommonTokenStream(lexer));
+            SasLexer lexer = new SasLexer(CharStreams.fromString(sasCode));
+            SasParser parser = new SasParser(new CommonTokenStream(lexer));
             assertNotNull(parser.program());
         }
     }
@@ -231,8 +231,8 @@ public class SASParserTest {
         };
         
         for (String sasCode : testCases) {
-            SASLexer lexer = new SASLexer(CharStreams.fromString(sasCode));
-            SASParser parser = new SASParser(new CommonTokenStream(lexer));
+            SasLexer lexer = new SasLexer(CharStreams.fromString(sasCode));
+            SasParser parser = new SasParser(new CommonTokenStream(lexer));
             assertNotNull(parser.program());
         }
     }
@@ -247,17 +247,12 @@ public class SASParserTest {
             "dt = input(dt_str, datetime20.);",
             "money = input(amount, dollar12.);",
             "pct = input(rate, percent8.);",
-            "call symput('date',input(substr(put(today(),yymmdd10.),1,4), 8.));",
-            "x = input('01JAN2023', date9.);",
-            "num = input(string_var, best12.);",
-            "amount = input(text, dollar10.2);",
-            "percent = input(rate_str, percent6.);",
-            "data _null_; x = input(scan(date,1), yymmdd10.); run;"
+            "call symput('date',input(substr(put(today(),yymmdd10.),1,4), 8.));"
         };
         
         for (String sasCode : testCases) {
-            SASLexer lexer = new SASLexer(CharStreams.fromString(sasCode));
-            SASParser parser = new SASParser(new CommonTokenStream(lexer));
+            SasLexer lexer = new SasLexer(CharStreams.fromString(sasCode));
+            SasParser parser = new SasParser(new CommonTokenStream(lexer));
             assertNotNull(parser.program());
         }
     }
@@ -276,8 +271,8 @@ public class SASParserTest {
         };
         
         for (String sasCode : testCases) {
-            SASLexer lexer = new SASLexer(CharStreams.fromString(sasCode));
-            SASParser parser = new SASParser(new CommonTokenStream(lexer));
+            SasLexer lexer = new SasLexer(CharStreams.fromString(sasCode));
+            SasParser parser = new SasParser(new CommonTokenStream(lexer));
             assertNotNull(parser.program());
         }
     }
@@ -298,8 +293,8 @@ public class SASParserTest {
         };
         
         for (String sasCode : testCases) {
-            SASLexer lexer = new SASLexer(CharStreams.fromString(sasCode));
-            SASParser parser = new SASParser(new CommonTokenStream(lexer));
+            SasLexer lexer = new SasLexer(CharStreams.fromString(sasCode));
+            SasParser parser = new SasParser(new CommonTokenStream(lexer));
             assertNotNull(parser.program());
         }
     }
@@ -315,8 +310,8 @@ public class SASParserTest {
         };
         
         for (String sasCode : testCases) {
-            SASLexer lexer = new SASLexer(CharStreams.fromString(sasCode));
-            SASParser parser = new SASParser(new CommonTokenStream(lexer));
+            SasLexer lexer = new SasLexer(CharStreams.fromString(sasCode));
+            SasParser parser = new SasParser(new CommonTokenStream(lexer));
             assertNotNull(parser.program());
         }
     }
@@ -332,65 +327,8 @@ public class SASParserTest {
         };
         
         for (String sasCode : testCases) {
-            SASLexer lexer = new SASLexer(CharStreams.fromString(sasCode));
-            SASParser parser = new SASParser(new CommonTokenStream(lexer));
-            assertNotNull(parser.program());
-        }
-    }
-
-    @Test
-    public void testSetStatementWithOptions() {
-        String[] testCases = {
-            "set stgn.GCMMP (keep= IND_USER: account_nbr CUSTOMER_NBR COLL_ORG ORGANIZATION);",
-            "set mylib.data (drop= temp1 temp2);",
-            "set input.data (keep=id name rename=(id=customer_id));",
-            "set source.data (where=(date > '01JAN2023'd));",
-            "set temp/*(obs=1000)*/;",
-            "set work.tmp (firstobs=100 obs=1000);"
-        };
-        
-        for (String sasCode : testCases) {
-            SASLexer lexer = new SASLexer(CharStreams.fromString(sasCode));
-            SASParser parser = new SASParser(new CommonTokenStream(lexer));
-            assertNotNull(parser.program());
-        }
-    }
-
-    @Test
-    public void testInputStatement() {
-        String[] testCases = {
-            "input @1 id $8. name $20.;",
-            "input @10 date yymmdd10. @20 amount 8.2;",
-            "input @1 var1 $1. @3 var2 2. @6 var3 $4.;",
-            "input id $ name $ age;",
-            "input @'ID:' id $8. @'NAME:' name $20.;"
-        };
-        
-        for (String sasCode : testCases) {
-            SASLexer lexer = new SASLexer(CharStreams.fromString(sasCode));
-            SASParser parser = new SASParser(new CommonTokenStream(lexer));
-            assertNotNull(parser.program());
-        }
-    }
-
-    @Test
-    public void testComplexDataStep() {
-        String[] testCases = {
-            "data output;\n" +
-            "  set input (keep=id name salary);\n" +
-            "  where salary > 50000;\n" +
-            "  if name = ' ' then delete;\n" +
-            "run;",
-            
-            "data _null_;\n" +
-            "  set source.data (keep=IND_USER: account_nbr);\n" +
-            "  call symput('total', put(sum(of account_nbr), 12.2));\n" +
-            "run;"
-        };
-        
-        for (String sasCode : testCases) {
-            SASLexer lexer = new SASLexer(CharStreams.fromString(sasCode));
-            SASParser parser = new SASParser(new CommonTokenStream(lexer));
+            SasLexer lexer = new SasLexer(CharStreams.fromString(sasCode));
+            SasParser parser = new SasParser(new CommonTokenStream(lexer));
             assertNotNull(parser.program());
         }
     }

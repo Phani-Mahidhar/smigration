@@ -1,7 +1,11 @@
-parser grammar SASParser;
+parser grammar SasParser;
+
+@header {
+package com.sas.parser;
+}
 
 options {
-    tokenVocab = SASLexer;
+    tokenVocab = SasLexer;
 }
 
 // Program structure
@@ -32,7 +36,7 @@ basicStatement
 
 dataStepStatement
     : DATA (datasetName | NULL) (dataOptions)? SEMICOLON
-      (dataStepContent)*
+      (dataStepContent | whereClause)*
       RUN SEMICOLON
     ;
 
@@ -78,14 +82,121 @@ untilDo
     ;
 
 procStepStatement
-    : PROC identifier procOptions? SEMICOLON
-      (procStepContent)*
-      RUN SEMICOLON
+    : PROC procType procOptions? SEMICOLON
+      procStepContent*
+      (RUN | QUIT) SEMICOLON
+    ;
+
+procType
+    : SQL
+    | CONTENTS contentsOptions?
+    | identifier
+    ;
+
+contentsOptions
+    : DATA EQUALS (datasetRef) 
+      (OUT EQUALS datasetName)?
+    ;
+
+datasetRef
+    : datasetName
+    | libraryRef DOT macroVariable
+    ;
+
+libraryRef
+    : identifier
     ;
 
 procStepContent
-    : basicStatement
+    : sqlStatement
+    | basicStatement
     ;
+
+// Simplified SQL-related rules
+sqlStatement
+    : selectStatement
+    | emptyStatement
+    ;
+
+emptyStatement: SEMICOLON;
+
+selectStatement
+    : SELECT distinctClause? selectItems
+      FROM tableReference
+      (joinClause)*
+      (whereClause)?
+      (groupByClause)?
+      (havingClause)?
+      (orderByClause)?
+      (INTO COLON identifier)?
+      SEMICOLON
+    ;
+
+distinctClause: DISTINCT;
+
+selectItems
+    : MULT                                           // SELECT *
+    | selectItem (COMMA selectItem)*                 // col1, col2, ...
+    ;
+
+selectItem
+    : (tableRef DOT)? columnName (AS? alias)?       // table.col AS alias
+    | aggregateFunction (AS? alias)?                // COUNT(*) AS total
+    | expression (AS? alias)?                       // expr AS alias
+    ;
+
+aggregateFunction
+    : COUNT LPAREN MULT RPAREN              // COUNT(*)
+    | (SUM | AVG | MIN | MAX) LPAREN columnName RPAREN  // Other aggregates
+    ;
+
+tableReference
+    : tableRef (AS? alias)?
+    ;
+
+joinClause
+    : joinType? JOIN tableReference ON joinCondition
+    ;
+
+joinType
+    : INNER
+    | (LEFT | RIGHT | FULL) OUTER?
+    ;
+
+joinCondition
+    : condition
+    ;
+
+groupByClause
+    : GROUP BY groupByItem (COMMA groupByItem)*
+    ;
+
+groupByItem
+    : columnName
+    | expression
+    ;
+
+havingClause
+    : HAVING condition
+    ;
+
+orderByClause
+    : ORDER BY orderByItem (COMMA orderByItem)*
+    ;
+
+orderByItem
+    : columnName (ASC | DESC)?
+    | expression (ASC | DESC)?
+    ;
+
+intoClause
+    : INTO COLON macroVariable
+    ;
+
+tableRef: (libraryRef DOT)? identifier;
+viewRef: (libraryRef DOT)? identifier;
+columnName: identifier;
+alias: identifier;
 
 macroDefStatement
     : MACRO identifier (LPAREN macroParams? RPAREN)? SEMICOLON
@@ -100,7 +211,7 @@ macroStatement
     ;
 
 macroDefinition
-    : MACRO identifier ('(' macroParams? ')')?
+    : MACRO identifier (LBRACE macroParams? RBRACE)?
       basicStatement*
       MEND (identifier)?
     ;
@@ -151,14 +262,14 @@ inputFunction
 
 // Format handling
 format
-    : IDENTIFIER ('.' NUMBER?)?
-    | DOLLAR IDENTIFIER ('.' NUMBER?)?
+    : IDENTIFIER (DOT NUMBER?)?
+    | DOLLAR IDENTIFIER (DOT NUMBER?)?
     | (OUTFORMAT | INFORMAT | FORMAT_STYLE)
     ;
 
 inputFormat
     : format
-    | COLON (NUMBER | DOLLAR NUMBER)? ('.' identifier?)?
+    | COLON (NUMBER | DOLLAR NUMBER)? (DOT identifier?)?
     ;
 
 // Common elements
@@ -169,7 +280,7 @@ literal: STRING | NUMBER;
 
 // Options and parameters
 optionsAndParameters
-    : '(' option (COMMA? option)* ')'
+    : LBRACE option (COMMA? option)* RBRACE
     ;
 
 option
@@ -195,7 +306,12 @@ libraryStatement: LIBNAME variable (STRING | identifier) libOptions? SEMICOLON;
 callStatement
     : (CALL identifier LPAREN callArgs? RPAREN
     | CALL SYMPUT LPAREN symputArgs RPAREN
+    | CALL SYMPUTX LPAREN symputxArgs RPAREN
     | CALL EXECUTE LPAREN STRING RPAREN) SEMICOLON
+    ;
+
+symputxArgs
+    : STRING COMMA (expression | functionExpression)
     ;
 
 // Missing option definitions
@@ -205,21 +321,38 @@ dataOptions
     : optionsAndParameters
     | formatOption
     | whereClause
+    | (optionsAndParameters whereClause)
+    | (whereClause optionsAndParameters)
     ;
 
 formatOption: FORMAT formatList;
 formatList: formatItem (COMMA formatItem)*;
 formatItem: identifier format;
 
-whereClause: WHERE condition;
-condition
-    : expression comparison expression
-    | condition (AND | OR) condition
-    | NOT condition
-    | LPAREN condition RPAREN
+whereClause
+    : WHERE whereExpression SEMICOLON
     ;
 
-comparison: EQUALS | NE | LT | LE | GT | GE | IN | CONTAINS;
+whereExpression
+    : whereCondition
+    | LPAREN whereExpression RPAREN
+    | whereExpression AND whereExpression
+    | whereExpression OR whereExpression
+    | NOT whereExpression
+    ;
+
+whereCondition
+    : identifier comparison (literal | identifier | macroVariable)
+    | identifier IN LPAREN (literal | identifier | macroVariable) (COMMA (literal | identifier | macroVariable))* RPAREN
+    | identifier CONTAINS STRING
+    | FORMAT EQUALS (literal | identifier | macroVariable)
+    ;
+
+emptyString
+    : STRING  // This will match both '' and ""
+    ;
+
+star: MULT;
 
 // Missing parameter definitions
 callArgs: functionArgList;
@@ -367,4 +500,54 @@ variable
 
 incStatement
     : INC (STRING | IDENTIFIER) SEMICOLON
+    ;
+
+condition
+    : LPAREN condition RPAREN
+    | NOT condition
+    | condition (AND | OR) condition
+    | expression comparison expression
+    | macroVariable comparison (literal | identifier | macroVariable)
+    | functionExpression comparison (literal | identifier | macroVariable | functionExpression)
+    | identifier IN LPAREN (literal | identifier | macroVariable) (COMMA (literal | identifier | macroVariable))* RPAREN
+    | identifier CONTAINS STRING
+    | identifier comparison (literal | identifier | macroVariable | functionExpression)
+    ;
+
+comparison
+    : EQUALS                    // = or EQ
+    | NE                        // <> or NE
+    | LT                        // < or LT
+    | LE                       // <= or LE
+    | GT                       // > or GT
+    | GE                      // >= or GE
+    | IN                      // IN
+    | CONTAINS               // CONTAINS
+    | LIKE                   // LIKE
+    | BETWEEN               // BETWEEN
+    | IS                    // IS NULL, IS MISSING
+    ;
+
+// Add columnDefinitions and related rules
+columnDefinitions
+    : columnDefinition (COMMA columnDefinition)*
+    ;
+
+columnDefinition
+    : columnName columnType columnAttributes*
+    ;
+
+columnType
+    : CHAR (LPAREN NUMBER RPAREN)?
+    | VARCHAR (LPAREN NUMBER RPAREN)?
+    | NUMBER (LPAREN NUMBER? (COMMA NUMBER)? RPAREN)?
+    | DATE
+    | DATETIME
+    | TIME
+    ;
+
+columnAttributes
+    : INFORMAT EQUALS format
+    | FORMAT EQUALS format
+    | LENGTH EQUALS NUMBER
     ;

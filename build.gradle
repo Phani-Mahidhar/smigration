@@ -1,0 +1,44 @@
+group 'com.sas.parser'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+apply plugin: 'antlr'
+
+sourceCompatibility = 21
+targetCompatibility = 21
+
+repositories {
+  mavenCentral()
+}
+
+def antlrVersion = '4.13.2'
+
+dependencies {
+  antlr "org.antlr:antlr4:${antlrVersion}"
+  implementation "org.antlr:antlr4-runtime:${antlrVersion}"
+  testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
+}
+
+generateGrammarSource {
+    // Keep a copy of generated sources
+    arguments += ["-visitor", '-listener', "-long-messages",  "-package", "com.sas.parser"]
+    doLast {
+        println "Copying generated grammar lexer/parser files to main directory."
+        copy {
+            from "${buildDir}/generated-src/antlr/main"
+            into "generated-src/main/java"
+        }
+    }
+}
+
+clean {
+    delete "${buildDir}/generated-src"
+}
+
+compileJava {
+    dependsOn generateGrammarSource
+}
+
+test {
+  useJUnitPlatform()
+}

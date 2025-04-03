@@ -1,0 +1,4 @@
+build/
+generated-src/
+gradle/
+.gradle
