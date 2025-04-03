@@ -21,7 +21,7 @@ dependencies {
 
 generateGrammarSource {
     // Keep a copy of generated sources
-    arguments += ["-visitor", '-listener', "-long-messages",  "-package", "com.sas.parser"]
+    arguments += ["-visitor", '-listener', "-long-messages"]
     doLast {
         println "Copying generated grammar lexer/parser files to main directory."
         copy {
