@@ -1,5 +1,9 @@
 package com.sas.canonical;
 
-public class CanonicalBuilder {
+import com.sas.canonical.statement.SasStatement;
 
+public class CanonicalBuilder {
+  SasStatement buildCanonical() {
+    return null;
+  }
 }

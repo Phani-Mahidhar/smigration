@@ -16,11 +16,11 @@ def antlrVersion = '4.13.2'
 dependencies {
   antlr "org.antlr:antlr4:${antlrVersion}"
   implementation "org.antlr:antlr4-runtime:${antlrVersion}"
+  implementation("org.apache.commons:commons-lang3:3.0")
   testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
 
 generateGrammarSource {
-    // Keep a copy of generated sources
     arguments += ["-visitor", '-listener', "-long-messages"]
     doLast {
         println "Copying generated grammar lexer/parser files to main directory."
