@@ -17,6 +17,8 @@ dependencies {
   antlr "org.antlr:antlr4:${antlrVersion}"
   implementation "org.antlr:antlr4-runtime:${antlrVersion}"
   implementation("org.apache.commons:commons-lang3:3.0")
+  // https://mvnrepository.com/artifact/com.google.guava/guava
+  implementation("com.google.guava:guava:11.0.2")
   testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 }
 

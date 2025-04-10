@@ -169,10 +169,12 @@ public class ExpressionWriter {
   }
 
   public void removeComma(int idx) {
-    if (String.valueOf(buf.charAt(idx)).equals(",")) {
-      buf.deleteCharAt(idx);
+    if (idx < 0) {
+      idx = buf.length() - 2;
     }
-
+    if (String.valueOf(buf.charAt(idx)).equals(",")) {
+      buf.delete(idx, idx + 1);
+    }
   }
 
   public void removeSpace(int idx) {
