@@ -19,31 +19,31 @@ public class ExpressionWriter {
   public ExpressionWriter newlineAndIndent() {
     buf.append("\n");
     indentPending = true;
-    return getThis();
+    return this;
   }
 
   public ExpressionWriter newline() {
     buf.append("\n");
-    return getThis();
+    return this;
   }
 
   public ExpressionWriter indent() {
     spacer.spaces(buf);
-    return getThis();
+    return this;
   }
 
   public ExpressionWriter begin(String s) {
     append(s);
     begin();
     indentPending = s.endsWith("\n");
-    return getThis();
+    return this;
   }
 
   public ExpressionWriter end(String s) {
     end();
     append(s);
     indentPending = s.endsWith("\n");
-    return getThis();
+    return this;
   }
 
   /**
@@ -63,102 +63,102 @@ public class ExpressionWriter {
   public ExpressionWriter append(char c) {
     checkIndent();
     buf.append(c);
-    return getThis();
+    return this;
   }
 
   public ExpressionWriter appendSpace() {
     buf.append(" ");
-    return getThis();
+    return this;
   }
 
   public ExpressionWriter append(Object o) {
     checkIndent();
     buf.append(o);
-    return getThis();
+    return this;
   }
 
   public ExpressionWriter append(String s) {
     checkIndent();
     buf.append(s);
-    return getThis();
+    return this;
   }
 
   public ExpressionWriter appendSingleQuote() {
     checkIndent();
     buf.append("'");
-    return getThis();
+    return this;
   }
 
   public ExpressionWriter appendSingleQuotes() {
     checkIndent();
     buf.append("'");
-    return getThis();
+    return this;
   }
 
   public ExpressionWriter appendDoubleQuotes() {
     checkIndent();
     buf.append("\"");
-    return getThis();
+    return this;
   }
 
   public ExpressionWriter appendTripleDoubleQuotes() {
     checkIndent();
     buf.append("\"\"\"");
-    return getThis();
+    return this;
   }
 
   public ExpressionWriter appendAssignment() {
     checkIndent();
     buf.append(" = ");
-    return getThis();
+    return this;
   }
 
   public ExpressionWriter appendColonAssignment() {
     checkIndent();
     buf.append(":=");
-    return getThis();
+    return this;
   }
 
   public ExpressionWriter appendDot() {
     checkIndent();
     buf.append(".");
-    return getThis();
+    return this;
   }
 
   public ExpressionWriter startParentheses() {
     checkIndent();
     buf.append("(");
-    return getThis();
+    return this;
   }
 
   public ExpressionWriter closeParentheses() {
     checkIndent();
     buf.append(")");
-    return getThis();
+    return this;
   }
 
   public ExpressionWriter startConicalBrackets() {
     checkIndent();
     buf.append("<");
-    return getThis();
+    return this;
   }
 
   public ExpressionWriter closeConicalBrackets() {
     checkIndent();
     buf.append(">");
-    return getThis();
+    return this;
   }
 
   public ExpressionWriter appendComma() {
     checkIndent();
     buf.append(", ");
-    return getThis();
+    return this;
   }
 
   public ExpressionWriter appendSemiColon() {
     checkIndent();
     buf.append(";");
-    return getThis();
+    return this;
   }
 
   public void removeSemicolon(int idx) {
@@ -214,10 +214,6 @@ public class ExpressionWriter {
 
   public void removeIndent() {
     indentPending = false;
-  }
-
-  private ExpressionWriter getThis() {
-    return this;
   }
 
   private static final int INDENT = 4;

@@ -15,7 +15,7 @@ public class PySparkTransformer {
   }
 
   public String translateSasFile(SasFile file) {
-    StatementToPySparkVisitor statementToPySparkVisitor = new StatementToPySparkVisitor();
+    StatementToPySparkVisitor statementToPySparkVisitor = new StatementToPySparkVisitor(config);
     for (Statement statement : file.getStatements()) {
       statement.accept(statementToPySparkVisitor);
     }
@@ -28,7 +28,7 @@ public class PySparkTransformer {
     pySparkCode.append("\n");
     if (config.setupSparkSession()) {
       pySparkCode.append("# Initialize SparkSession\n");
-      pySparkCode.append("spark = SparkSession.builder.appName(\"SAS to PySpark\").getOrCreate()\n\n");
+      pySparkCode.append("spark = SparkSession.builder.appName('").append(config.appName()).append("').getOrCreate()\n\n");
     }
     pySparkCode.append(statementToPySparkVisitor.getWriterContent());
     return pySparkCode.toString();

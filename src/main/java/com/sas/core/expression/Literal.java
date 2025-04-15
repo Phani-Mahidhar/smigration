@@ -1,9 +1,10 @@
 package com.sas.core.expression;
 
-import java.math.BigDecimal;
-
+import com.sas.core.SasStringUtil;
 import com.sas.core.types.BasicType;
 import com.sas.core.types.TypeName;
+
+import java.math.BigDecimal;
 
 public class Literal extends Expression {
   private final Object value;
@@ -31,6 +32,14 @@ public class Literal extends Expression {
       case TypeName.BOOLEAN -> value instanceof Boolean;
       default -> true;
     };
+  }
+
+  public boolean isResolvable() {
+    return type.getTypeName() == TypeName.STRING && SasStringUtil.isResolvable(stringValue());
+  }
+
+  public boolean isStringLiteral() {
+    return type.getTypeName() == TypeName.STRING && SasStringUtil.isStringLiteral(stringValue());
   }
 
   @Override

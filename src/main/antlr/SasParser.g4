@@ -239,7 +239,11 @@ letStatement: LET assignment SEMICOLON;
 // Update putStatement rule
 putStatement: PUT (~SEMICOLON)+ SEMICOLON;
 
-libraryStatement: LIBNAME (macroVariable | identifier) (STRING | identifier) libOptions? SEMICOLON;
+libraryStatement: LIBNAME libraryName (STRING | identifier) libOptions? SEMICOLON;
+
+libraryName: macroVariable
+    | identifier
+    ;
 
 callStatement
     : CALL expression SEMICOLON

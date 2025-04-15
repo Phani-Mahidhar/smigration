@@ -16,9 +16,12 @@ public class StatementToPySparkVisitor implements StatementVisitor<Void> {
   private final Map<String, Set<String>> imports = new HashMap<>();
   ExpressionWriter writer;
 
+  private final PySparkConfig config;
+
   ExpressionToPySparkVisitor expressionToPySparkVisitor;
 
-  StatementToPySparkVisitor() {
+  StatementToPySparkVisitor(PySparkConfig config) {
+    this.config = config;
     this.writer = new ExpressionWriter();
     this.expressionToPySparkVisitor = new ExpressionToPySparkVisitor(writer);
   }
@@ -44,7 +47,7 @@ public class StatementToPySparkVisitor implements StatementVisitor<Void> {
 
   @Override
   public Void visit(LetStatement let) {
-    writer.append(let.getName());
+    writer.append(variableName(let.getName()));
     writer.append(" = ");
     let.getValue().accept(expressionToPySparkVisitor);
     writer.append("\n");
@@ -77,5 +80,14 @@ public class StatementToPySparkVisitor implements StatementVisitor<Void> {
     call.getCallExpression().accept(expressionToPySparkVisitor);
     writer.append("\n");
     return null;
+  }
+
+  @Override
+  public Void visit(LibraryStatement call) {
+    return null;
+  }
+
+  private String variableName(String name) {
+    return config.capitalizeIdentifier() ? name.toUpperCase(Locale.ROOT) : name.toLowerCase(Locale.ROOT);
   }
 }

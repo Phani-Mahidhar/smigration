@@ -23,7 +23,7 @@ public class SasFile {
     List<Statement> statements = new ArrayList<>();
     SasParser.ProgramContext tree = parser.program();
     SasToStatementVisitor sasToStatementVisitor = new SasToStatementVisitor();
-    for (SasParser.ProgramStatementContext programStatementContext: tree.programStatement()) {
+    for (SasParser.ProgramStatementContext programStatementContext : tree.programStatement()) {
       Statement statement = programStatementContext.accept(sasToStatementVisitor);
       if (statement != null) {
         statements.add(statement);

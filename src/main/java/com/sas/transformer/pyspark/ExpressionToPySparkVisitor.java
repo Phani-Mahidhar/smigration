@@ -1,5 +1,6 @@
 package com.sas.transformer.pyspark;
 
+import com.sas.core.SasStringUtil;
 import com.sas.core.expression.*;
 import com.sas.core.expression.operator.Operator;
 import com.sas.core.types.TypeName;
@@ -20,10 +21,10 @@ class ExpressionToPySparkVisitor implements ExpressionVisitor<Void> {
     this.writer = writer;
   }
 
-  private void addImport(String packageName, String objectName) {
-    Set<String> objectNames = imports.getOrDefault(packageName, new HashSet<String>());
-    objectNames.add(objectName);
-    imports.put(packageName, objectNames);
+  private void addImport(String packageName, String... objectNames) {
+    Set<String> existingObjects = imports.getOrDefault(packageName, new HashSet<String>());
+    existingObjects.addAll(Arrays.stream(objectNames).toList());
+    imports.put(packageName, existingObjects);
   }
 
   private void addImport(String packageName) {
@@ -88,11 +89,11 @@ class ExpressionToPySparkVisitor implements ExpressionVisitor<Void> {
   }
 
   private void unparseInputCall(FunctionCall call) {
-    addImport("datetime", "datetime");
-    addImport("datetime", "timedelta");
+    addImport("datetime", "datetime", "timedelta");
 
     writer.append("datetime.strptime(");
-    writer.append(asPythonVariable(call.getArgs().get(0).toString()));
+    call.getArgs().getFirst().accept(this);
+//    writer.append(asPythonVariable(call.getArgs().get(0).toString()));
     writer.appendComma();
     writer.append(asPythonDatetimeFormat(call.getArgs().get(1).toString()));
     writer.append(")");
@@ -129,8 +130,7 @@ class ExpressionToPySparkVisitor implements ExpressionVisitor<Void> {
       unparseBinarySyntax(call);
       return;
     }
-    addImport("datetime", "datetime");
-    addImport("datetime", "timedelta");
+    addImport("datetime", "datetime", "timedelta");
 
     List<Expression> args = call.getArgs();
     for (int i = 0; i < 2; i++) {
@@ -149,11 +149,10 @@ class ExpressionToPySparkVisitor implements ExpressionVisitor<Void> {
   }
 
   private void unparsePutCall(FunctionCall call) {
-    addImport("datetime", "datetime");
-    addImport("datetime", "timedelta");
+    addImport("datetime", "datetime", "timedelta");
 
     List<Expression> args = call.getArgs();
-    boolean wrapBraces = (args.get(0) instanceof FunctionCall && ((FunctionCall) args.get(0)).getOperator().isBinaryFunction());
+    boolean wrapBraces = isBinaryFunction(args.getFirst());
     if (wrapBraces) writer.append("(");
     call.getArgs().getFirst().accept(this);
     if (wrapBraces) writer.append(")");
@@ -181,20 +180,23 @@ class ExpressionToPySparkVisitor implements ExpressionVisitor<Void> {
   }
 
   protected static String asPythonStringLiteral(String value) {
-    boolean sqLiteral = value.startsWith("'") && value.endsWith("'");
-    if (sqLiteral) {
+    if (SasStringUtil.isStringLiteral(value)) {
       return value;
     }
     String substitutedLiteral = MACRO_VARIABLE
       .matcher(value)
       .replaceAll(matcher -> "{" + matcher.group(1).toUpperCase() + "}");
-    if (substitutedLiteral.startsWith("\"") && substitutedLiteral.endsWith("\"")) {
+    if (SasStringUtil.isDoubleQuoted(substitutedLiteral)) {
       return "f" + substitutedLiteral;
     }
     return "f'" + substitutedLiteral + "'";
   }
 
+  private boolean isBinaryFunction(Expression expr) {
+    return expr instanceof FunctionCall call && call.getOperator().isBinaryFunction();
+  }
+
   public static void main(String[] args) {
-    System.out.println(asPythonStringLiteral("&ST_STAGING./staging/&rundate.")); //f'{ST_STAGING}/staging/{RUNDATE}'
+    assert Objects.equals(asPythonStringLiteral("&ST_STAGING./staging/&rundate."), "f'{ST_STAGING}/staging/{rundate}'");
   }
 }

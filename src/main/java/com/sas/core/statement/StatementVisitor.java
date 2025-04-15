@@ -8,4 +8,6 @@ public interface StatementVisitor<T> {
   T visit(DataStepStatement dataStep);
 
   T visit(CallStatement call);
+
+  T visit(LibraryStatement call);
 }
